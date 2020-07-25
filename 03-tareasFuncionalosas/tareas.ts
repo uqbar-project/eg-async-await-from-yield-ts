@@ -18,11 +18,18 @@ function* estudiarPromises(): Generator<void> {
   console.log('repaso generador')
 }
 
+function* subirFoto(): Generator<void> {
+  for (let i of [1, 2, 3, 4, 5]) {
+    console.log('subiendo parte ', i)
+    sleep(2000)
+    yield
+  }
+}
+
 function* leerTwitter(): Generator<void> {
   console.log('leemos nuestra página de Twitter')
   yield
-  sleep(10000)
-  console.log('cargamos foto en la página de Twitter')
+  yield* subirFoto()
   console.log('posteamos un fotoshop gracioso')
   yield
   console.log('mensaje privado a un amigue')

@@ -291,7 +291,67 @@ listaFrutas.next()
 /* etc. */
 ```
 
-Esta variante es útil para delegar la subida de la foto en otra función generadora ................
+Esta variante es útil para delegar la subida de la foto en otra función generadora:
+
+```ts
+function* leerTwitter(): Generator<void> {
+  console.log('leemos nuestra página de Twitter')
+  yield
+  yield* subirFoto()
+  console.log('posteamos un fotoshop gracioso')
+  yield
+  console.log('mensaje privado a un amigue')
+  yield
+  console.log('leemos trending topics')
+  console.log('posteamos indignación total!!')
+}
+```
+
+Claro que para que sea efectivo, estaría bueno particionar la operación "subir foto" en partes más pequeñas:
+
+```ts
+function* subirFoto(): Generator<void> {
+  for (let i of [1, 2, 3, 4, 5]) {
+    console.log('subiendo parte ', i)
+    sleep(2000)
+    yield
+  }
+}
+
+function* leerTwitter(): Generator<void> {
+  console.log('leemos nuestra página de Twitter')
+  yield
+  yield* subirFoto()
+  console.log('posteamos un fotoshop gracioso')
+  yield
+  console.log('mensaje privado a un amigue')
+  yield
+  console.log('leemos trending topics')
+  console.log('posteamos indignación total!!')
+}
+```
+
+Esto permite que mientras está subiendo la foto, podamos terminar de estudiar este artículo:
+
+![thread partido mejora la concurrencia](./images/threadYieldFromPartido.gif)
+
+_
+
+## Comparación un thread vs. multithreading
+
+Como hemos visto, trabajar con un hilo solo expone a que un error involuntario o adrede cause que nuestro proceso de Node quede totalmente bloqueado. Basta con definir un loop infinito en cualquiera de las corrutinas para que podamos experimentarlo en carne propia:
+
+![bloqueo por while true](./images/bloqueoPorWhileTrue.gif)
+
+
+
+## Async / await
+
+- Async/await
+- Promises
+- Ejemplos async/await vs. promises
+
+................
 
 
 
@@ -307,3 +367,9 @@ function* g() {
   yield 6
 }
 
+## Material adicional
+
+- [6 Things you may not know about promises](https://www.sitepoint.com/six-things-might-know-promises/)
+- [Understanding JavaScript Generators with Examples](https://codeburst.io/understanding-generators-in-es6-javascript-with-examples-6728834016d5)
+- [Por qué no podemos usar yield dentro de un arrow function](https://stackoverflow.com/questions/33316765/why-is-es6-yield-a-reserved-word-when-called-in-this-context)
+- [Yield is a reserved word](https://github.com/prettier/prettier/issues/1624)
