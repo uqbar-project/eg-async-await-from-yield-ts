@@ -5,13 +5,19 @@ function sleep(milisegundos: number) {
   while (new Date().getTime() < now + milisegundos) { /* do nothing */ }
 }
 
-function* estudiarPromises(): Generator<void> {
+function* inicioEstudio(): Generator<void> {
   console.log('voy a estudiar promises')
   console.log('sí que lo voy a hacer')
-  yield
+}
+
+function* estudiarIteradores(): Generator<void> {
   console.log('leo iteradores')
   console.log('hago un ejercicio de un iterador')
-  yield
+}
+
+function* estudiarPromises(): Generator<void> {
+  yield* inicioEstudio()
+  yield* estudiarIteradores()
   console.log('repaso iterador')
   console.log('leo generadores')
   console.log('hago un ejercicio de un generador')
@@ -26,14 +32,23 @@ function* subirFoto(): Generator<void> {
   }
 }
 
-function* leerTwitter(): Generator<void> {
+function* leerPaginaTwitter(): Generator<void> {
   console.log('leemos nuestra página de Twitter')
-  yield
-  yield* subirFoto()
+}
+
+function* postPhotoshopGracioso(): Generator<void> {
   console.log('posteamos un fotoshop gracioso')
-  yield
+}
+
+function* mensajeAmigue() {
   console.log('mensaje privado a un amigue')
-  yield
+}
+
+function* leerTwitter(): Generator<void> {
+  yield* leerPaginaTwitter()
+  yield* subirFoto()
+  yield* postPhotoshopGracioso()
+  yield* mensajeAmigue()
   console.log('leemos trending topics')
   console.log('posteamos indignación total!!')
 }

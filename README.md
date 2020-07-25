@@ -344,15 +344,87 @@ El modelo de _threads_ de Java evita ensuciar nuestro código con instrucciones 
 
 Los problemas empiezan a ocurrir cuando la concurrencia utiliza recursos compartidos (y los modifica), cuando tenemos actividades de I/O (en una aplicación web esto ocurre permanentemente), y cuando tenemos una alta tasa de usuarios concurrentes, que necesita un gran número de hilos para soportarlo.
 
-Aquí es donde **una arquitectura mono-hilo que garantiza que todas las operaciones no son bloqueantes es donde puede**
+Aquí es donde **una arquitectura mono-hilo que garantice que todas sus operaciones son no-bloqueantes puede sacar ventaja**: no tiene costo de _context switch_, entonces todo el tiempo estará ejecutando una tarea sin tener que desdoblarse en hilos. Por supuesto, cada uno es responsable de que sus tareas comiencen y terminen en un tiempo razonable.
+
+## Refactor de nuestra solución
+
+Vamos a refactorizar nuestra solución inicial, en lugar de tener corrutinas con varias instrucciones yield, generaremos nuevas corrutinas que representan las porciones de operación de `estudiarPromises` y `leerTwitter`:
+
+```ts
+function* leerPaginaTwitter(): Generator<void> {
+  console.log('leemos nuestra página de Twitter')
+}
+
+function* postPhotoshopGracioso(): Generator<void> {
+  console.log('posteamos un fotoshop gracioso')
+}
+
+function* mensajeAmigue() {
+  console.log('mensaje privado a un amigue')
+}
+
+function* leerTwitter(): Generator<void> {
+  yield* leerPaginaTwitter()
+  yield* subirFoto()
+  yield* postPhotoshopGracioso()
+  yield* mensajeAmigue()
+  console.log('leemos trending topics')
+  console.log('posteamos indignación total!!')
+}
+```
+
+Ahora `leerTwitter` delega en cuatro corrutinas antes de resolver sus propias tareas. Lo mismo hacemos con `estudiarPromises`. Esto tiene el propósito de dividir cada una de las tareas en funciones pausables que no son bloqueantes... y nos permitirá cambiar al formato `async/await` muy fácilmente.
 
 ## Async / await
 
+Podemos hacer un cambio más:
+
+- todas las funciones generadoras (`function *`) las vamos a definir como funciones `async`
+- lo que devuelven no son `Generator<T>` sino `Promise<T>`, en nuestro caso, todas son void
+- y la instrucción `yield` la reemplazamos por `await`
+
+Entonces vemos cómo se resuelve la función que lee twitter ahora:
+
+```ts
+async function leerTwitter(): Promise<void> {
+  await leerPaginaTwitter()
+  await subirFoto()
+  await postPhotoshopGracioso()
+  await mensajeAmigue()
+  console.log('leemos trending topics')
+  console.log('posteamos indignación total!!')
+}
+```
+
+Y un pequeño cambio en las funciones `sleep` y `subirFoto`:
+
+```ts
+function sleep(milliseconds: number) {
+  return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
+
+async function subirFoto(): Promise<void> {
+  for (let i of [1, 2, 3, 4, 5]) {
+    console.log('subiendo parte ', i)
+    await sleep(2000)
+  }
+}
+```
+
+Ahora sí, podemos ejecutar en paralelo todas las tareas, con un algoritmo mucho más sencillo: `Promise.all`
+
+```ts
+async function ejecutar(tareas: Promise<void>[]) {
+  await Promise.all(tareas)
+}
+
+ejecutar([estudiarPromises(), leerTwitter()])
+```
+
+Aquí vemos que las tareas se van ejecutando en el mismo orden que en nuestra solución con yield. Solo que desaparecieron las líneas separadoras...
 
 
-- Async/await
-- Promises
-- Ejemplos async/await vs. promises
+
 
 ## Material adicional
 
@@ -365,5 +437,3 @@ Aquí es donde **una arquitectura mono-hilo que garantiza que todas las operacio
   - [Performance Comparison: Java vs Node
 View Larger Image](https://www.tandemseven.com/blog/performance-java-vs-node/)
   - [Speaking Intelligently about "Java vs Node" Performance](https://rclayton.silvrback.com/speaking-intelligently-about-java-vs-node-performance)
-- **Promises**
-  - [6 Things you may not know about promises](https://www.sitepoint.com/six-things-might-know-promises/)
