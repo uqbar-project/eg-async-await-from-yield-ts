@@ -37,13 +37,13 @@ La interfaz del iterador de Javascript requiere una función `next()` que devuel
 partida = crearPartida()
 {next: ƒ}
 partida.next()
-{value: "blancas", done: false}
+{"value": "blancas", "done": false}
 partida.next()
-{value: "negras", done: false}
+{"value": "negras", "done": false}
 partida.next()
-{value: "blancas", done: false}
+{"value": "blancas", "done": false}
 partida.next()
-{value: "negras", done: false}
+{"value": "negras", done: false}
 ```
 
 Esto puede resultar un poco diferente a la iteración en Java, donde si intentamos pedir `next()` a un iterador que no tiene elementos, deberíamos esperar un error. Por eso tenemos otro método `hasNext()` que nos indica si hay más elementos:
@@ -72,19 +72,18 @@ function* frutas() {
 Este código que puede ejecutar en tu navegador, primero llama a frutas y lo asocia a un iterable. Luego vamos llamando a `next()` sucesivamente: la función frutas encuentra `yield 'pera'`, entonces devuelve el JSON
 
 ```json
-{ value: "pera", done: false }
+{ "value": "pera", "done": false }
 ```
 
 y la función `frutas()` **se pausa**. Esto implica que sabemos cuál fue la última línea que se ejecutó, pero el control vuelve a estar del lado de la consola. Con el segundo llamado a `next()`, se produce el segundo yield: `yield "banana"`. Eso devuelve el JSON:
 
 ```json
-{ value: "banana", done: false }
+{ "value": "banana", "done": false }
 ```
 
 y nuevamente se pausa la función frutas. Nuevamente enviamos el mensaje `next()` y lo interesante aquí es que se van a ejecutar dos líneas: el console.log y por último el yield. Porque no es necesario que cada línea de un generador haga siempre `yield`, podemos realizar varias cosas antes de devolver el control a quien nos llamó.
 
 ![generadores](./images/generators.png)
-
 
 Te dejamos [una segunda variante del Rango definido con un método generador en un objeto](./02-generador/rango.ts), con [sus correspondientes tests](./02-generador/rango.spec.ts).
 
