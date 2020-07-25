@@ -85,6 +85,195 @@ y nuevamente se pausa la función frutas. Nuevamente enviamos el mensaje `next()
 
 ![generadores](./images/generators.png)
 
+
+Te dejamos [una segunda variante del Rango definido con un método generador en un objeto](./02-generador/rango.ts), con [sus correspondientes tests](./02-generador/rango.spec.ts).
+
+## Concurrencia vs. paralelismo
+
+Antes de continuar, es importante distinguir la diferencia entre **concurrencia** y **paralelismo**.
+
+- cocinar y pasar el trapo, leer los mails y jugar una carrera con el Super Mario Bros, cantar una canción y contar un chiste, son actividades que pueden darse en forma concurrente: en el lapso de una hora la cocina quedó limpia y tenemos un locro preparado. No obstante, si en distintos instantes observamos qué estamos haciendo, será una cosa u otra, pero _no las dos al mismo tiempo_. Aquí hablamos de **concurrencia**: estamos haciendo varias tareas a la vez aunque vamos alternando entre cada una de ellas.
+
+![concurrencia](./images/Concurrency.png)
+
+- por el contrario, podemos estar cruzando la calle, mirando el celular (en forma descuidada) y transpirando, esas tres acciones ocurren al mismo tiempo. Aquí tenemos **paralelismo**.
+
+![paralelismo](./images/Parallellism.png)
+
+Para más información recomendamos leer [este artículo](https://blog.usejournal.com/lets-understand-the-difference-between-concurrency-and-parallelism-80be6c61ad24).
+
+_
+
+## Ejecutando funciones en forma concurrente
+
+### JVM: Múltiples hilos
+
+Si queremos ejecutar dos funciones en forma concurrente, tenemos estas alternativas:
+
+- **trabajar con múltiples hilos**, como hace la JVM (Java Virtual Machine). Entonces cada función corre en un hilo con su propio estado, y todo es bastante simple... salvo que ambas funciones necesiten acceder a un estado compartido. Por ejemplo, dos _threads_ que trabajan con el mismo objeto en memoria, y ejecutan dos métodos diferentes
+
+```xtend
+class Cliente {
+  int saldo
+
+  def pagar(int cuanto) {
+    val nuevoSaldo = saldo - cuanto - this.calcularPunitorio() 
+    saldo = nuevoSaldo
+  }
+
+  def facturar(int cuanto) {
+    saldo = saldo + cuanto
+  }
+}
+```
+
+Se puede dar la siguiente situación:
+
+- el thread 1 ejecuta el método pagar, el saldo actual es 100, está pagando 100 y el cálculo de punitorios le da 0, la variable nuevoSaldo es 0 (100 - 100 - 0). 
+- el thread 2 ejecuta el método facturar 500 pesos. El saldo se actualiza a 500.
+- el thread 1 ejecuta la segunda línea del método pagar => el saldo = 0, **pisa el valor que el thread 2 había calculado**. Esto es lo que se conoce como _race condition_ o condición de carrera, y por eso en Java podemos generar un _lock_ sobre el objeto, hasta tanto termine la ejecución del método, mediante la directiva `synchronized`:
+
+```xtend
+class Cliente {
+  int saldo
+
+  def synchronized pagar(int cuanto) {
+    val nuevoSaldo = saldo - cuanto - this.calcularPunitorio() 
+    saldo = nuevoSaldo
+  }
+
+  def synchronized facturar(int cuanto) {
+    saldo = saldo + cuanto
+  }
+}
+```
+
+De todas maneras, debemos asegurarnos de no estar tratando de acceder a algún otro recurso compartido que ya esté bloqueado por otro proceso, y aun peor, que ese proceso no esté esperando que nosotros terminemos de soltar nuestro objeto. En ese caso llegaremos a un incómodo _deadlock_, donde dos procesos no sueltan un recurso y quedan inmóviles (en _starvation_):
+
+![deadlock](./images/deadlock.jpg)
+
+### VM de JS: Un solo hilo
+
+En el entorno de Typescript estamos corriendo una Virtual Machine de Javascript, que implementa un solo thread. ¿Cómo podemos ejecutar entonces dos funciones en forma concurrente? Ejecutando funciones **asincrónicas**, cuya ejecución iremos pausando hasta tanto se complete todo el requerimiento que dicha función debe cumplir. Ya les hemos presentado las funciones pausables, son los iteradores y generadores con los que iniciamos esta explicación.
+
+Ahora veremos un ejemplo más concreto:
+
+- queremos estudiar este tema
+- y hacer algo de ejercicio
+
+Podemos modelarlo con objetos o funciones, vamos a resolverlo ahora con funciones, las diferencias en la implementación son muy sutiles.
+
+Definiremos la función que estudia promises:
+
+```ts
+function* estudiarPromises(): Generator<void> {
+  console.log('voy a estudiar promises')
+  console.log('sí que lo voy a hacer')
+  yield
+  console.log('leo iteradores')
+  console.log('hago un ejercicio de un iterador')
+  yield
+  console.log('repaso iterador')
+  console.log('leo generadores')
+  console.log('hago un ejercicio de un generador')
+  console.log('repaso generador')
+}
+```
+
+Y también leemos Twitter:
+
+```ts
+function* leerTwitter(): Generator<void> {
+  console.log('leemos nuestra página de Twitter')
+  yield
+  console.log('leemos trending topics')
+  console.log('posteamos indignación total!!')
+  yield
+  console.log('mensaje privado a un amigue')
+  yield
+  console.log('cargamos foto en la página de Twitter')
+  console.log('posteamos un fotoshop gracioso')
+}
+```
+
+Ahora definiremos una función que va a recibir la lista de tareas y las va a ejecutar parte por parte:
+
+```ts
+function ejecutar(tareas: Generator<void>[]) {
+  let i = 0
+  while (!isEmpty(tareas)) {
+    const actual = tareas[i]
+    const { done } = actual.next()
+    console.log('------------------------------------------')
+    if (done) {
+      // eliminamos la tarea
+      tareas.splice(i, 1)
+    }
+    i++
+    if (i >= tareas.length) {
+      i = 0
+    }
+  }
+}
+```
+
+En el archivo escribimos la llamada a la función ejecutar:
+
+```ts
+ejecutar([estudiarPromises(), leerTwitter()])
+```
+
+y desde la terminal podemos ejecutar typescript con ts-node, por ejemplo:
+
+```bash
+npx ts-node tareas.ts
+```
+
+Aquí vemos cómo las _corrutinas_ estudiarPromises y leerTwitter se van ejecutando por partes, liberando la atención del procesador con la instrucción _yield_:
+
+![tareas - yield](./images/TareasYield.png)
+
+### Introduciendo un Delay
+
+Supongamos que la foto tarda 10 segundos en subir. Lo podemos reflejar haciendo un pequeño cambio en nuestra función leerTwitter:
+
+```ts
+function sleep(milisegundos: number) {
+  var now = new Date().getTime()
+  while (new Date().getTime() < now + milisegundos) { /* do nothing */ }
+}
+
+function* leerTwitter(): Generator<void> {
+  console.log('leemos nuestra página de Twitter')
+  yield
+  sleep(10000)
+  console.log('cargamos foto en la página de Twitter')
+  console.log('posteamos un fotoshop gracioso')
+  yield
+  console.log('mensaje privado a un amigue')
+  yield
+  console.log('leemos trending topics')
+  console.log('posteamos indignación total!!')
+}
+```
+
+Como vemos ahora, ocurre en el segundo paso...
+
+- poner un sleep de 20 segundos. Mientras ejecutan esa acción nadie puede hacer nada porque...
+- no hay otro thread!
+- yield from de Python es el yield *
+
+function* f() {
+  yield 5
+  yield 7
+}
+
+function* g() {
+  yield* f()
+  yield 6
+}
+
+
 ### Otro tipo de generadores
 
 Existe una variante de `yield` con asterisco, que nos permite devolver una lista de valores, si es que no necesitamos hacer nada entre cada pausa:
@@ -109,71 +298,5 @@ listaFrutas.next()
 
 /* etc. */
 ```
-
-Te dejamos [una segunda variante del Rango definido con un método generador en un objeto](./02-generador/rango.ts), con [sus correspondientes tests](./02-generador/rango.spec.ts).
-
-## Concurrencia vs. paralelismo
-
-Antes de continuar, es importante distinguir la diferencia entre **concurrencia** y **paralelismo**.
-
-- cocinar y pasar el trapo, leer los mails y jugar una carrera con el Super Mario Bros, cantar una canción y contar un chiste, son actividades que pueden darse en forma concurrente: en el lapso de una hora la cocina quedó limpia y tenemos un locro preparado. No obstante, si en distintos instantes observamos qué estamos haciendo, será una cosa u otra, pero _no las dos al mismo tiempo_. Aquí hablamos de **concurrencia**: estamos haciendo varias tareas a la vez aunque vamos alternando entre cada una de ellas.
-
-![concurrencia](./images/Concurrency.png)
-
-- por el contrario, podemos estar cruzando la calle, mirando el celular (en forma descuidada) y transpirando, esas tres acciones ocurren al mismo tiempo. Aquí tenemos **paralelismo**.
-
-![paralelismo](./images/Parallellism.png)
-
-Para más información recomendamos leer [este artículo](https://blog.usejournal.com/lets-understand-the-difference-between-concurrency-and-parallelism-80be6c61ad24).
-
-_
-
-EJEMPLO DEL SUPERMERCADO
-
-- Tenemos dos funciones, o dos métodos
-- Asincronismo: una forma de hacer concurrencia colaborativa.
-  - El S.O. ejecuta función 1 y 2
-  - Si tengo hilos: en cada hilo puedo ejecutar funciones 1 ó 2. El problema es cómo compartís información de los hilos: leí el saldo 100, me pausaron, alguien deposita 500 en otro hilo, cuando quiero sacar 20 en el hilo original, tengo 100 - 20 = 80 y estoy pisando la información del saldo.
-  - O bien... lo manejamos con asincronismo
-
-```py
-def loop(tareas):
-    while tareas:
-         actual = tareas.pop(0)
-         try:
-            print('-')
-            next(actual)
-            tarea.append(actual)
-         except StopIteration:
-            pass
-          
-def estudiar():
-    print('leyendo')
-    yield
-    print('armar un resumen')
-    yield
-    print('memorizar')
-
-def facebook():
-    print('mirar fotos')
-    print('mirar posts de vacaciones')
-    print('criticar fotos de vacaciones')
-    yield
-    print('postear "ufff como estoy estudiando"')
-    yield
-    while True:
-       print('chatear')
-       yield
-
-loop([estudiar(), facebook()]
-```
-
-estudiar y facebook se llaman corrutinas
-
-
-
-
-
-
 
 

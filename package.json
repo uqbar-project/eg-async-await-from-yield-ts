@@ -15,6 +15,8 @@
     "typescript": "^3.9.7"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.158",
+    "lodash": "^4.17.19",
     "ts-node": "^8.10.2"
   }
 }

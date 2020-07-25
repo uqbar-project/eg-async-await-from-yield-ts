@@ -55,3 +55,20 @@ describe('para un rango descendente', () => {
   })
 
 })
+
+describe('generator - para un rango de un solo elemento', () => {
+  let rango: Rango
+
+  beforeEach(() => {
+    rango = new Rango(3, 3)
+  })
+
+  test('único valor - next devuelve inicialmente ese número', () => {
+    expect(rango.next().value).toBe(3)
+  })
+
+  test('único valor -  next llega al límite la primera vez', () => {
+    expect(rango.next().done).toBeTruthy()
+  })
+
+})

@@ -1,14 +1,10 @@
 export class Rango {
-  desde: number
-  hasta: number
   valorActual: number
   paso: number
 
-  constructor(desdeOriginal: number, hastaOriginal: number) {
-    this.paso = desdeOriginal > hastaOriginal ? -1 : 1
-    this.desde = desdeOriginal
-    this.hasta = hastaOriginal
-    this.valorActual = desdeOriginal
+  constructor(public desde: number, public hasta: number) {
+    this.paso = desde > hasta ? -1 : 1
+    this.valorActual = desde
   }
 
   next() {

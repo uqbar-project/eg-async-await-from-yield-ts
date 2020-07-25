@@ -12,8 +12,12 @@ export class Rango {
   }
 
   *iterator(): Generator<number> {
-    for (let i = this.desde; this.condicionCorteRango(i); i = i + this.paso) {
-      yield i
+    if (this.desde === this.hasta) {
+      return this.desde
+    } else {
+      for (let i = this.desde; this.condicionCorteRango(i); i = i + this.paso) {
+        yield i
+      }
     }
   }
 
