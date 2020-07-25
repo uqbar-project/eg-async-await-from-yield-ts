@@ -161,11 +161,11 @@ Ahora veremos un ejemplo más concreto:
 
 Podemos modelarlo con objetos o funciones, vamos a resolverlo ahora con funciones, las diferencias en la implementación son muy sutiles.
 
-Definiremos la función que estudia:
+Definiremos la función que estudia promises:
 
 ```ts
-function* estudiarAsyncAwait(): Generator<void> {
-  console.log('voy a estudiar async/await')
+function* estudiarPromises(): Generator<void> {
+  console.log('voy a estudiar promises')
   console.log('sí que lo voy a hacer')
   yield
   console.log('leo iteradores')
@@ -218,7 +218,7 @@ function ejecutar(tareas: Generator<void>[]) {
 En el archivo escribimos la llamada a la función ejecutar:
 
 ```ts
-ejecutar([estudiarAsyncAwait(), leerTwitter()])
+ejecutar([estudiarPromises(), leerTwitter()])
 ```
 
 y desde la terminal podemos ejecutar typescript con ts-node, por ejemplo:
@@ -227,7 +227,7 @@ y desde la terminal podemos ejecutar typescript con ts-node, por ejemplo:
 npx ts-node tareas.ts
 ```
 
-Aquí vemos cómo las _corrutinas_ estudiarAsyncAwait y leerTwitter se van ejecutando por partes, liberando la atención del procesador con la instrucción _yield_:
+Aquí vemos cómo las _corrutinas_ estudiarPromises y leerTwitter se van ejecutando por partes, liberando la atención del procesador con la instrucción _yield_:
 
 ![tareas - yield](./images/TareasYield.png)
 
