@@ -257,24 +257,17 @@ function* leerTwitter(): Generator<void> {
 }
 ```
 
-Como vemos ahora, ocurre en el segundo paso...
+Como vemos ahora, ocurre en el segundo paso y los 15 segundos que tarda en subir la foto se notan:
 
-- poner un sleep de 20 segundos. Mientras ejecutan esa acción nadie puede hacer nada porque...
-- no hay otro thread!
-- yield from de Python es el yield *
+![tareas con sleep - bloquean el único thread](./images/TareasYieldConSleep.png)
 
-function* f() {
-  yield 5
-  yield 7
-}
+El único thread que tiene la Virtual Machine de JS se está bloqueando y eso impide que cualquier otro proceso pueda tomar el control.
 
-function* g() {
-  yield* f()
-  yield 6
-}
+![bloqueo thread por sleep](./images/bloqueoThreadPorSleep.gif)
 
+> **Corolario:** en JS debemos ser todavía más cuidadosos de no entrar en loops infinitos porque bloquearemos la virtual machine de nuestro navegador, o de nuestro servidor (si es que el server de Backend corre sobre NodeJS por ejemplo)
 
-### Otro tipo de generadores
+### Anidando yields
 
 Existe una variante de `yield` con asterisco, que nos permite devolver una lista de valores, si es que no necesitamos hacer nada entre cada pausa:
 
@@ -299,4 +292,19 @@ listaFrutas.next()
 /* etc. */
 ```
 
+Esta variante es útil para delegar la subida de la foto en otra función generadora ................
+
+
+
+- yield from de Python es el yield *
+
+function* f() {
+  yield 5
+  yield 7
+}
+
+function* g() {
+  yield* f()
+  yield 6
+}
 

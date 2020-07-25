@@ -67,7 +67,7 @@ describe('generator - para un rango de un solo elemento', () => {
     expect(rango.next().value).toBe(3)
   })
 
-  test('único valor -  next llega al límite la primera vez', () => {
+  test('único valor -  next llega al límite cuando pasamos la primera vez', () => {
     expect(rango.next().done).toBeTruthy()
   })
 
