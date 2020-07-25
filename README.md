@@ -52,7 +52,7 @@ Te dejamos para que investigues el [ejemplo que genera un rango finito de númer
 
 ## Generadores
 
-Las funciones [generadoras](https://developer.mozilla.org/es/docs/Web/JavaScript/Guide/Iterators_and_Generators) simplifican la creación de estructuras iterables, sin necesidad de mantener un estado interno como los iteradores. Veamos un ejemplo:
+Las funciones **generadoras** simplifican la creación de estructuras iterables, sin necesidad de mantener un estado interno como los iteradores. Veamos un ejemplo:
 
 ```js
 function* frutas() {
@@ -101,7 +101,6 @@ Antes de continuar, es importante distinguir la diferencia entre **concurrencia*
 
 Para más información recomendamos leer [este artículo](https://blog.usejournal.com/lets-understand-the-difference-between-concurrency-and-parallelism-80be6c61ad24).
 
-_
 
 ## Ejecutando funciones en forma concurrente
 
@@ -162,11 +161,11 @@ Ahora veremos un ejemplo más concreto:
 
 Podemos modelarlo con objetos o funciones, vamos a resolverlo ahora con funciones, las diferencias en la implementación son muy sutiles.
 
-Definiremos la función que estudia promises:
+Definiremos la función que estudia:
 
 ```ts
-function* estudiarPromises(): Generator<void> {
-  console.log('voy a estudiar promises')
+function* estudiarAsyncAwait(): Generator<void> {
+  console.log('voy a estudiar async/await')
   console.log('sí que lo voy a hacer')
   yield
   console.log('leo iteradores')
@@ -219,7 +218,7 @@ function ejecutar(tareas: Generator<void>[]) {
 En el archivo escribimos la llamada a la función ejecutar:
 
 ```ts
-ejecutar([estudiarPromises(), leerTwitter()])
+ejecutar([estudiarAsyncAwait(), leerTwitter()])
 ```
 
 y desde la terminal podemos ejecutar typescript con ts-node, por ejemplo:
@@ -228,7 +227,7 @@ y desde la terminal podemos ejecutar typescript con ts-node, por ejemplo:
 npx ts-node tareas.ts
 ```
 
-Aquí vemos cómo las _corrutinas_ estudiarPromises y leerTwitter se van ejecutando por partes, liberando la atención del procesador con la instrucción _yield_:
+Aquí vemos cómo las _corrutinas_ estudiarAsyncAwait y leerTwitter se van ejecutando por partes, liberando la atención del procesador con la instrucción _yield_:
 
 ![tareas - yield](./images/TareasYield.png)
 
@@ -335,41 +334,36 @@ Esto permite que mientras está subiendo la foto, podamos terminar de estudiar e
 
 ![thread partido mejora la concurrencia](./images/threadYieldFromPartido.gif)
 
-_
-
 ## Comparación un thread vs. multithreading
 
 Como hemos visto, trabajar con un hilo solo expone a que un error involuntario o adrede cause que nuestro proceso de Node quede totalmente bloqueado. Basta con definir un loop infinito en cualquiera de las corrutinas para que podamos experimentarlo en carne propia:
 
 ![bloqueo por while true](./images/bloqueoPorWhileTrue.gif)
 
+El modelo de _threads_ de Java evita ensuciar nuestro código con instrucciones `yield`: si cada proceso ejecuta en forma independiente esto hace que el algoritmo de ejecución dentro del procesador sea transparente para el desarrollador. 
 
+Los problemas empiezan a ocurrir cuando la concurrencia utiliza recursos compartidos (y los modifica), cuando tenemos actividades de I/O (en una aplicación web esto ocurre permanentemente), y cuando tenemos una alta tasa de usuarios concurrentes, que necesita un gran número de hilos para soportarlo.
+
+Aquí es donde **una arquitectura mono-hilo que garantiza que todas las operaciones no son bloqueantes es donde puede**
 
 ## Async / await
+
+
 
 - Async/await
 - Promises
 - Ejemplos async/await vs. promises
 
-................
-
-
-
-- yield from de Python es el yield *
-
-function* f() {
-  yield 5
-  yield 7
-}
-
-function* g() {
-  yield* f()
-  yield 6
-}
-
 ## Material adicional
 
-- [6 Things you may not know about promises](https://www.sitepoint.com/six-things-might-know-promises/)
-- [Understanding JavaScript Generators with Examples](https://codeburst.io/understanding-generators-in-es6-javascript-with-examples-6728834016d5)
-- [Por qué no podemos usar yield dentro de un arrow function](https://stackoverflow.com/questions/33316765/why-is-es6-yield-a-reserved-word-when-called-in-this-context)
-- [Yield is a reserved word](https://github.com/prettier/prettier/issues/1624)
+- **Iteradores y Generadores**
+  - [Mozilla Developers: Iteradores y Generadores](https://developer.mozilla.org/es/docs/Web/JavaScript/Guide/Iterators_and_Generators)
+  - [Understanding JavaScript Generators with Examples](https://codeburst.io/understanding-generators-in-es6-javascript-with-examples-6728834016d5)
+  - [Por qué no podemos usar yield dentro de un arrow function](https://stackoverflow.com/questions/33316765/why-is-es6-yield-a-reserved-word-when-called-in-this-context)
+  - [Yield is a reserved word](https://github.com/prettier/prettier/issues/1624)
+- **Aplicaciones Node vs. Java**
+  - [Performance Comparison: Java vs Node
+View Larger Image](https://www.tandemseven.com/blog/performance-java-vs-node/)
+  - [Speaking Intelligently about "Java vs Node" Performance](https://rclayton.silvrback.com/speaking-intelligently-about-java-vs-node-performance)
+- **Promises**
+  - [6 Things you may not know about promises](https://www.sitepoint.com/six-things-might-know-promises/)
