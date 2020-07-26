@@ -334,6 +334,8 @@ Esto permite que mientras está subiendo la foto, podamos terminar de estudiar e
 
 ![thread partido mejora la concurrencia](./images/threadYieldFromPartido.gif)
 
+Podés ver [el desarrollo completo de la solución](./03-tareasFuncionalosas/tareas.ts).
+
 ## Comparación un thread vs. multithreading
 
 Como hemos visto, trabajar con un hilo solo expone a que un error involuntario o adrede cause que nuestro proceso de Node quede totalmente bloqueado. Basta con definir un loop infinito en cualquiera de las corrutinas para que podamos experimentarlo en carne propia:
@@ -423,8 +425,65 @@ ejecutar([estudiarPromises(), leerTwitter()])
 
 Aquí vemos que las tareas se van ejecutando en el mismo orden que en nuestra solución con yield. Solo que desaparecieron las líneas separadoras...
 
+![async / await](./images/asyncAwait.gif)
 
+Podés ver [el desarrollo previo, con funciones generadoras](./04-tareasAsyncAwait/tareasPreviasAlAsyncAwait.ts) y [la solución con async/await](./04-tareasAsyncAwait/tareasRefactorizadas.ts).
 
+## Funciones asincrónicas para obtener información del backend
+
+En resumen:
+
+- definir una función `async` es definir una función que ejecuta asincrónicamente como una corrutina
+- cada vez que hacemos `await` estamos pausando la ejecución y liberando el thread para que se active otra corrutina
+- solo debemos encargarnos de que todas nuestras operaciones sean no bloqueantes
+
+Lo mismo ocurre cuando en lugar de operaciones `void` estamos esperando un valor concreto. Supongamos que estamos viendo la información de un cliente y queremos mostrar las últimas facturas y cuánto es la deuda que mantiene con nosotros. La información se obtiene por un servicio web (lo que llamamos _backend_), por lo tanto, la llamada **puede tardar**: es un pedido que se hace por el protocolo http, que requiere conexión de servidores por la red y eso tiene una [latencia](https://es.wikipedia.org/wiki/Latencia). Lo ideal es que utilicemos una corrutina, es decir que la llamada se envuelva en una función asincrónica no-bloqueante. Veamos cómo sería la implementación con funciones generadoras:
+
+```ts
+/** Podría ser una respuesta del backend, y tardar bastante en responder */
+function* facturasDelCliente(): Generator<Factura> {
+  console.log('resolvemos facturas del cliente')
+  return [
+    { numero: '0001-00004578', total: 15600, fecha: new Date(), saldo: 0, },
+    { numero: '0001-00009126', total: 2200, fecha: new Date(), saldo: 700, },
+    { numero: '0001-00009533', total: 18300, fecha: new Date(), saldo: 18300, },
+  ]
+}
+
+function* saldoDelCliente() {
+  console.log('resolvemos el saldo del cliente')
+  // Delegamos a la corrutina que obtiene las facturas del cliente
+  // se pausa esta función pero no se bloquea al thread
+  const facturas = yield* facturasDelCliente()
+  const saldo = sumBy(facturas, 'saldo')
+  console.log('saldo', saldo)
+  yield saldo
+}
+```
+
+La misma forma la definimos con funciones `async` y esperando dentro de nuestra corrutina el resultado:
+
+```ts
+/** Podría ser una respuesta del backend, y tardar bastante en responder */
+async function facturasDelCliente() {
+  console.log('resolvemos facturas del cliente')
+  return [
+    { numero: '0001-00004578', total: 15600, fecha: new Date(), saldo: 0, },
+    { numero: '0001-00009126', total: 2200, fecha: new Date(), saldo: 700, },
+    { numero: '0001-00009533', total: 18300, fecha: new Date(), saldo: 18300, },
+  ]
+}
+
+async function saldoDelCliente() {
+  console.log('resolvemos el saldo del cliente')
+  // Para poder sumar el saldo de las facturas, esperamos a las facturas
+  // lo que devuelve la función asincrónica lo recibe facturas
+  const facturas = await facturasDelCliente()
+  const saldo = sumBy(facturas, 'saldo')
+  console.log('saldo', saldo)
+  return saldo
+}
+```
 
 ## Material adicional
 
