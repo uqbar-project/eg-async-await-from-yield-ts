@@ -1,7 +1,7 @@
 import { isEmpty } from 'lodash'
 
 function sleep(milisegundos: number) {
-  var now = new Date().getTime()
+  const now = new Date().getTime()
   while (new Date().getTime() < now + milisegundos) { /* do nothing */ }
 }
 

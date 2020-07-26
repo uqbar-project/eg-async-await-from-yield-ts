@@ -20,7 +20,7 @@ describe('para un rango ascendente', () => {
     expect(rango.next().value).toBe(4)
   })
 
-  test("iterator asc - si avanzamos todas las veces, llegamos al final del recorrido", () => {
+  test('iterator asc - si avanzamos todas las veces, llegamos al final del recorrido', () => {
     rango.next()
     rango.next()
     expect(rango.next().done).toBeTruthy()

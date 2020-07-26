@@ -20,7 +20,7 @@ describe('generator - para un rango ascendente', () => {
     expect(rango.next().value).toBe(4)
   })
 
-  test("generator asc - si avanzamos todas las veces, llegamos al final del recorrido", () => {
+  test('generator asc - si avanzamos todas las veces, llegamos al final del recorrido', () => {
     rango.next()
     rango.next()
     expect(rango.next().done).toBeTruthy()
