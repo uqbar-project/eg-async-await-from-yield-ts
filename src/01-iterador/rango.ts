@@ -7,10 +7,10 @@ export class Rango {
     this.valorActual = desde
   }
 
-  next() {
+  next(): { value: number, done: boolean } {
     const result = {
       value: this.valorActual,
-      done: this.done()
+      done: this.done(),
     }
     this.valorActual = this.valorActual + this.paso
     return result
@@ -19,4 +19,5 @@ export class Rango {
   private done() {
     return this.valorActual === this.hasta
   }
+
 }

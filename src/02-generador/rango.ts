@@ -24,11 +24,11 @@ export class Rango {
     }
   }
 
-  condicionCorteRango(i: number) {
+  condicionCorteRango(i: number): boolean {
     return (this.ascendente()) ? i < this.hasta : i > this.hasta
   }
 
-  ascendente() {
+  ascendente(): boolean {
     return this.paso > 0
   }
 

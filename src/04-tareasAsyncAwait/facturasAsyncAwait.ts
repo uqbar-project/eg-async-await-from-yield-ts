@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { sumBy } from 'lodash'
 
 /*
@@ -16,9 +17,9 @@ interface IFactura {
 async function facturasDelCliente() {
   console.log('resolvemos facturas del cliente')
   return [
-    { numero: '0001-00004578', total: 15600, fecha: new Date(), saldo: 0, },
-    { numero: '0001-00009126', total: 2200, fecha: new Date(), saldo: 700, },
-    { numero: '0001-00009533', total: 18300, fecha: new Date(), saldo: 18300, },
+    { numero: '0001-00004578', total: 15600, fecha: new Date(), saldo: 0 },
+    { numero: '0001-00009126', total: 2200, fecha: new Date(), saldo: 700 },
+    { numero: '0001-00009533', total: 18300, fecha: new Date(), saldo: 18300 },
   ]
 }
 
@@ -37,4 +38,3 @@ function ejecutar(tareas: Promise<number>[]) {
 }
 
 ejecutar([saldoDelCliente()])
-

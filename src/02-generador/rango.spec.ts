@@ -48,7 +48,7 @@ describe('para un rango descendente', () => {
     expect(rango.next().value).toBe(4)
   })
 
-  test("generator desc - si avanzamos todas las veces, llegamos al final del recorrido", () => {
+  test('generator desc - si avanzamos todas las veces, llegamos al final del recorrido', () => {
     rango.next()
     rango.next()
     expect(rango.next().done).toBeTruthy()

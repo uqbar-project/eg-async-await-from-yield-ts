@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { isEmpty, sumBy } from 'lodash'
 
 /*
@@ -13,12 +14,13 @@ interface Factura {
 }
 
 /** Podría ser una respuesta del backend, y tardar bastante en responder */
+// eslint-disable-next-line require-yield
 function* facturasDelCliente(): Generator<Factura> {
   console.log('resolvemos facturas del cliente')
   return [
-    { numero: '0001-00004578', total: 15600, fecha: new Date(), saldo: 0, },
-    { numero: '0001-00009126', total: 2200, fecha: new Date(), saldo: 700, },
-    { numero: '0001-00009533', total: 18300, fecha: new Date(), saldo: 18300, },
+    { numero: '0001-00004578', total: 15600, fecha: new Date(), saldo: 0 },
+    { numero: '0001-00009126', total: 2200, fecha: new Date(), saldo: 700 },
+    { numero: '0001-00009533', total: 18300, fecha: new Date(), saldo: 18300 },
   ]
 }
 
@@ -48,4 +50,3 @@ function ejecutar(tareas: Generator[]) {
 }
 
 ejecutar([saldoDelCliente()])
-

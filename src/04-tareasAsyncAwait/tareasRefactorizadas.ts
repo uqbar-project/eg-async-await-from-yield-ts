@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 async function inicioEstudio(): Promise<void> {
   console.log('voy a estudiar promises')
   console.log('sí que lo voy a hacer')
@@ -22,7 +23,7 @@ function sleep(milliseconds: number) {
 }
 
 async function subirFoto(): Promise<void> {
-  for (let i of [1, 2, 3, 4, 5]) {
+  for (const i of [1, 2, 3, 4, 5]) {
     console.log('subiendo parte ', i)
     await sleep(2000)
   }

@@ -51,7 +51,7 @@ partida.next()
 
 Esto puede resultar un poco diferente a la iteración en Java, donde si intentamos pedir `next()` a un iterador que no tiene elementos, deberíamos esperar un error. Por eso tenemos otro método `hasNext()` que nos indica si hay más elementos:
 
-Te dejamos para que investigues el [ejemplo que genera un rango finito de números](./01-generador/rango.ts) con sus [correspondientes tests](./01-iterador/rango.spec.ts).
+Te dejamos para que investigues el [ejemplo que genera un rango finito de números](./src/01-generador/rango.ts) con sus [correspondientes tests](./src/01-iterador/rango.spec.ts).
 
 ## Generadores
 
@@ -88,7 +88,7 @@ y nuevamente se pausa la función frutas. Nuevamente enviamos el mensaje `next()
 
 ![generadores](./images/generators.png)
 
-Te dejamos [una segunda variante del Rango definido con un método generador en un objeto](./02-generador/rango.ts), con [sus correspondientes tests](./02-generador/rango.spec.ts).
+Te dejamos [una segunda variante del Rango definido con un método generador en un objeto](./src/02-generador/rango.ts), con [sus correspondientes tests](./src/02-generador/rango.spec.ts).
 
 ## Concurrencia vs. paralelismo
 
@@ -337,7 +337,7 @@ Esto permite que mientras está subiendo la foto, podamos terminar de estudiar e
 
 ![thread partido mejora la concurrencia](./images/threadYieldFromPartido.gif)
 
-Podés ver [el desarrollo completo de la solución](./03-tareasFuncionalosas/tareas.ts).
+Podés ver [el desarrollo completo de la solución](./src/03-tareasFuncionalosas/tareas.ts).
 
 ## Comparación un thread vs. multithreading
 
@@ -430,7 +430,7 @@ Aquí vemos que las tareas se van ejecutando en el mismo orden que en nuestra so
 
 ![async / await](./images/asyncAwait.gif)
 
-Podés ver [el desarrollo previo, con funciones generadoras](./04-tareasAsyncAwait/tareasPreviasAlAsyncAwait.ts) y [la solución con async/await](./04-tareasAsyncAwait/tareasRefactorizadas.ts).
+Podés ver [el desarrollo previo, con funciones generadoras](./src/04-tareasAsyncAwait/tareasPreviasAlAsyncAwait.ts) y [la solución con async/await](./src/04-tareasAsyncAwait/tareasRefactorizadas.ts).
 
 ## Funciones asincrónicas para obtener información del backend
 

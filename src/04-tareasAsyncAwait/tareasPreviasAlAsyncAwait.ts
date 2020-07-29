@@ -1,3 +1,5 @@
+/* eslint-disable require-yield */
+/* eslint-disable no-console */
 import { isEmpty } from 'lodash'
 
 function sleep(milisegundos: number) {
@@ -5,13 +7,19 @@ function sleep(milisegundos: number) {
   while (new Date().getTime() < now + milisegundos) { /* do nothing */ }
 }
 
-function* estudiarPromises(): Generator<void> {
+function* inicioEstudio(): Generator<void> {
   console.log('voy a estudiar promises')
   console.log('sí que lo voy a hacer')
-  yield
+}
+
+function* estudiarIteradores(): Generator<void> {
   console.log('leo iteradores')
   console.log('hago un ejercicio de un iterador')
-  yield
+}
+
+function* estudiarPromises(): Generator<void> {
+  yield* inicioEstudio()
+  yield* estudiarIteradores()
   console.log('repaso iterador')
   console.log('leo generadores')
   console.log('hago un ejercicio de un generador')
@@ -19,21 +27,30 @@ function* estudiarPromises(): Generator<void> {
 }
 
 function* subirFoto(): Generator<void> {
-  for (let i of [1, 2, 3, 4, 5]) {
+  for (const i of [1, 2, 3, 4, 5]) {
     console.log('subiendo parte ', i)
     sleep(2000)
     yield
   }
 }
 
-function* leerTwitter(): Generator<void> {
+function* leerPaginaTwitter(): Generator<void> {
   console.log('leemos nuestra página de Twitter')
-  yield
-  yield* subirFoto()
+}
+
+function* postPhotoshopGracioso(): Generator<void> {
   console.log('posteamos un fotoshop gracioso')
-  yield
+}
+
+function* mensajeAmigue() {
   console.log('mensaje privado a un amigue')
-  yield
+}
+
+function* leerTwitter(): Generator<void> {
+  yield* leerPaginaTwitter()
+  yield* subirFoto()
+  yield* postPhotoshopGracioso()
+  yield* mensajeAmigue()
   console.log('leemos trending topics')
   console.log('posteamos indignación total!!')
 }
