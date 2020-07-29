@@ -1,3 +1,6 @@
+# Explicando async/await desde cero
+
+[![Build Status](https://travis-ci.org/uqbar-project/eg-async-await-from-yield-ts.svg?branch=master)](https://travis-ci.org/uqbar-project/eg-async-await-from-yield-ts)
 
 ## Agradecimientos
 
