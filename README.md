@@ -353,6 +353,22 @@ Los problemas empiezan a ocurrir cuando la concurrencia utiliza recursos compart
 
 Aquí es donde **una arquitectura mono-hilo que garantice que todas sus operaciones son no-bloqueantes puede sacar ventaja**: no tiene costo de _context switch_, entonces todo el tiempo estará ejecutando una tarea sin tener que desdoblarse en hilos. Por supuesto, cada uno es responsable de que sus tareas comiencen y terminen en un tiempo razonable.
 
+Vemos cómo procesa la VM de JS un main que tiene tres llamadas a funciones:
+
+```js
+function foo() { console.log('First') }
+function bar() { setTimeout(200, { console.log('Second') }) }
+function baz() { console.log('Third') }
+
+foo()
+bar()
+baz()
+```
+
+![JS mono thread](./images/vmJSmonoThread.gif)
+
+Les recomendamos este [excelente artículo de Lydia Hallie](https://dev.to/lydiahallie/javascript-visualized-promises-async-await-5gke).
+
 ## Refactor de nuestra solución
 
 Vamos a refactorizar nuestra solución inicial, en lugar de tener corrutinas con varias instrucciones yield, generaremos nuevas corrutinas que representan las porciones de operación de `estudiarPromises` y `leerTwitter`:
