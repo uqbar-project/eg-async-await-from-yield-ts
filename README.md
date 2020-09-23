@@ -102,6 +102,8 @@ Antes de continuar, es importante distinguir la diferencia entre **concurrencia*
 
 ![paralelismo](./images/Parallellism.png)
 
+![concurrencia-vs-paralelismo](./images/concurrency-paralellism.jpeg)
+
 Para más información recomendamos leer [este artículo](https://blog.usejournal.com/lets-understand-the-difference-between-concurrency-and-parallelism-80be6c61ad24).
 
 
