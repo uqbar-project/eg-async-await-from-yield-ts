@@ -155,7 +155,7 @@ De todas maneras, debemos asegurarnos de no estar tratando de acceder a algún o
 
 ![deadlock](./images/deadlock.jpg)
 
-### VM de JS: Un solo hilo
+### VM de NodeJS: Un solo hilo
 
 En el entorno de Typescript estamos corriendo una Virtual Machine de Javascript, que implementa un solo thread. ¿Cómo podemos ejecutar entonces dos funciones en forma concurrente? Ejecutando funciones **asincrónicas**, cuya ejecución iremos pausando hasta tanto se complete todo el requerimiento que dicha función debe cumplir. Ya les hemos presentado las funciones pausables, son los iteradores y generadores con los que iniciamos esta explicación.
 
@@ -260,7 +260,7 @@ function* leerTwitter(): Generator<void> {
 }
 ```
 
-Como vemos ahora, ocurre en el segundo paso y los 15 segundos que tarda en subir la foto se notan:
+Como vemos ahora, ocurre en el segundo paso y el tiempo que tarda en subir la foto se notan:
 
 ![tareas con sleep - bloquean el único thread](./images/TareasYieldConSleep.png)
 

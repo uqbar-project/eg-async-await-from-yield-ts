@@ -5,6 +5,9 @@
   "main": "index.js",
   "author": "Fernando Dodino",
   "license": "ISC",
+  "scripts": {
+    "test": "npx jest --runInBand --detectOpenHandles --colors --verbose --reporters=default"
+  },
   "devDependencies": {
     "@types/jest": "^26.0.5",
     "jest": "^26.1.0",
