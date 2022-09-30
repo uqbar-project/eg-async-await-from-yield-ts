@@ -116,16 +116,16 @@ Si queremos ejecutar dos funciones en forma concurrente, tenemos estas alternati
 
 - **trabajar con múltiples hilos**, como hace la JVM (Java Virtual Machine). Entonces cada función corre en un hilo con su propio estado, y todo es bastante simple... salvo que ambas funciones necesiten acceder a un estado compartido. Por ejemplo, dos _threads_ que trabajan con el mismo objeto en memoria, y ejecutan dos métodos diferentes
 
-```xtend
+```kotlin
 class Cliente {
-  int saldo
+  var saldo = 0
 
-  def pagar(int cuanto) {
+  fun pagar(cuanto: Int) {
     val nuevoSaldo = saldo - cuanto - this.calcularPunitorio() 
     saldo = nuevoSaldo
   }
 
-  def facturar(int cuanto) {
+  fun facturar(cuanto: Int) {
     saldo = saldo + cuanto
   }
 }
@@ -135,18 +135,20 @@ Se puede dar la siguiente situación:
 
 - el thread 1 ejecuta el método pagar, el saldo actual es 100, está pagando 100 y el cálculo de punitorios le da 0, la variable nuevoSaldo es 0 (100 - 100 - 0). 
 - el thread 2 ejecuta el método facturar 500 pesos. El saldo se actualiza a 500.
-- el thread 1 ejecuta la segunda línea del método pagar => el saldo = 0, **pisa el valor que el thread 2 había calculado**. Esto es lo que se conoce como _race condition_ o condición de carrera, y por eso en Java podemos generar un _lock_ sobre el objeto, hasta tanto termine la ejecución del método, mediante la directiva `synchronized`:
+- el thread 1 ejecuta la segunda línea del método pagar => el saldo = 0, **pisa el valor que el thread 2 había calculado**. Esto es lo que se conoce como _race condition_ o condición de carrera, y por eso en Java podemos generar un _lock_ sobre el objeto, hasta tanto termine la ejecución del método, mediante la anotación `@Synchronized`:
 
-```xtend
+```kotlin
 class Cliente {
-  int saldo
+  var saldo = 0
 
-  def synchronized pagar(int cuanto) {
+  @Synchronized  
+  fun pagar(cuanto: Int) {
     val nuevoSaldo = saldo - cuanto - this.calcularPunitorio() 
     saldo = nuevoSaldo
   }
 
-  def synchronized facturar(int cuanto) {
+  @Synchronized
+  fun facturar(cuanto: Int) {
     saldo = saldo + cuanto
   }
 }

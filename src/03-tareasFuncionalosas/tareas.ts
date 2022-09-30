@@ -7,36 +7,36 @@ function sleep(milisegundos: number) {
 }
 
 function* estudiarPromises(): Generator<void> {
-  console.log('  voy a estudiar promises')
-  console.log('  sí que lo voy a hacer')
+  console.log('  [estudiarPromises] voy a estudiar promises')
+  console.log('  [estudiarPromises] sí que lo voy a hacer')
   yield
-  console.log('  leo iteradores')
-  console.log('  hago un ejercicio de un iterador')
+  console.log('  [estudiarPromises] leo iteradores')
+  console.log('  [estudiarPromises] hago un ejercicio de un iterador')
   yield
-  console.log('  repaso iterador')
-  console.log('  leo generadores')
-  console.log('  hago un ejercicio de un generador')
-  console.log('  repaso generador')
+  console.log('  [estudiarPromises] repaso iterador')
+  console.log('  [estudiarPromises] leo generadores')
+  console.log('  [estudiarPromises] hago un ejercicio de un generador')
+  console.log('  [estudiarPromises] repaso generador')
 }
 
 function* subirFoto(): Generator<void> {
   for (const i of [1, 2, 3, 4, 5]) {
-    console.log('**** subiendo parte ', i)
+    console.log('  [subirFoto] subiendo parte ', i)
     sleep(2000)
     yield
   }
 }
 
 function* leerTwitter(): Generator<void> {
-  console.log('leemos nuestra página de Twitter')
+  console.log('  [leerTwitter] leemos nuestra página de Twitter]')
   yield
-  console.log('leemos trending topics')
-  console.log('posteamos indignación total!!')
+  console.log('  [leerTwitter] leemos trending topics')
+  console.log('  [leerTwitter] posteamos indignación total!!')
   yield
-  console.log('mensaje privado a un amigue')
+  console.log('  [leerTwitter] mensaje privado a un amigue')
   yield
-  console.log('cargamos foto en la página de Twitter')
-  console.log('posteamos un fotoshop gracioso')
+  console.log('  [leerTwitter] cargamos foto en la página de Twitter')
+  console.log('  [leerTwitter] posteamos un fotoshop gracioso')
 }
 
 function ejecutar(tareas: Generator<void>[]) {
@@ -56,7 +56,7 @@ function ejecutar(tareas: Generator<void>[]) {
   }
 }
 
-ejecutar([estudiarPromises(), leerTwitter()])
+ejecutar([estudiarPromises(), leerTwitter(), subirFoto()])
 
 /*
  * =================================================================
