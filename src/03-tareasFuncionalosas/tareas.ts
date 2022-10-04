@@ -1,12 +1,12 @@
 /* eslint-disable no-console */
 import { isEmpty } from 'lodash'
 
+/* Espera asincrónica */
 class Timer {
   *wait(millisecs: number) {
     const now = new Date().getTime()  
     while (new Date().getTime() < now + millisecs) { yield }
   }
-
 }
 
 const timer = new Timer()
@@ -61,7 +61,6 @@ function ejecutar(tareas: Generator<void>[]) {
   while (!isEmpty(tareas)) {
     const tareaActual = tareas[i]
     const { done } = tareaActual.next()
-    console.log('------------------------------------------')
     if (done) {
       // eliminamos la tarea
       tareas.splice(i, 1)
@@ -73,7 +72,7 @@ function ejecutar(tareas: Generator<void>[]) {
   }
 }
 
-ejecutar([estudiarPromises(), leerTwitter(), subirFoto()])
+ejecutar([estudiarPromises(), leerTwitter()])
 
 /*
  * =================================================================
