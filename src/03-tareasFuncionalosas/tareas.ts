@@ -73,7 +73,7 @@ function ejecutar(tareas: Generator<void>[]) {
   }
 }
 
-ejecutar([estudiarPromises(), leerTwitter()])
+ejecutar([estudiarPromises(), leerTwitter(), subirFoto()])
 
 /*
  * =================================================================
